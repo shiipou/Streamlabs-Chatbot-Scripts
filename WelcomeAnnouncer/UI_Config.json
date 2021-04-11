@@ -8,13 +8,6 @@
         "tooltip": "True if you want it to only run when you are live",
         "group" : "General"
     },
-    "words": {
-        "type": "textbox",
-        "value": "hey, hi, hello",
-        "label": "Play command",
-        "tooltip": "Words that will trigger the random sound",
-        "group": "General"
-    },
     "permission": {
         "type": "dropdown",
         "value": "Everyone",
