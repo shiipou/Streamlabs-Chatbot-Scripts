@@ -17,13 +17,12 @@ volume = 0.1
 command = "__WelcomeAnnouncer__"
 soundspath = ""
 sounds = []
-words = []
 
 def ScriptToggled(state):
 	return
 
 def Init():
-	global sounds, soundspath, volume, words, settings
+	global sounds, soundspath, volume, settings
 
 	path = os.path.dirname(__file__)
 	soundspath = path + "\\sounds"
@@ -47,28 +46,25 @@ def Init():
 		}
 
 	volume = settings["volume"] / 1000.0
-	sounds = os.listdir(soundspath)	
-
-	words = settings["words"].replace(" ","").split(",")
-	words = [k.lower() for k in words]
+	sounds = os.listdir(soundspath)
 
 	return
 
 def Execute(data):
-	if data.IsChatMessage() and (data.GetParam(0).lower() in words) and Parent.HasPermission(data.User, settings["permission"], "") and ((settings["liveOnly"] and Parent.IsLive()) or (not settings["liveOnly"])):
+	if data.IsChatMessage() and Parent.HasPermission(data.User, settings["permission"], "") and ((settings["liveOnly"] and Parent.IsLive()) or (not settings["liveOnly"])):
 		outputMessage = ""
-		userId = data.User			
+		userId = data.User
 		username = data.UserName
 
 		if settings["useCooldown"] and (Parent.IsOnCooldown(ScriptName, command) or Parent.IsOnUserCooldown(ScriptName, command, userId)):
 			if settings["useCooldownMessages"]:
 				if Parent.GetCooldownDuration(ScriptName, command) > Parent.GetUserCooldownDuration(ScriptName, command, userId):
 					cdi = Parent.GetCooldownDuration(ScriptName, command)
-					cd = str(cdi / 60) + ":" + str(cdi % 60).zfill(2) 
+					cd = str(cdi / 60) + ":" + str(cdi % 60).zfill(2)
 					outputMessage = settings["onCooldown"]
 				else:
 					cdi = Parent.GetUserCooldownDuration(ScriptName, command, userId)
-					cd = str(cdi / 60) + ":" + str(cdi % 60).zfill(2) 
+					cd = str(cdi / 60) + ":" + str(cdi % 60).zfill(2)
 					outputMessage = settings["onUserCooldown"]
 				outputMessage = outputMessage.replace("$cd", cd)
 			else:
@@ -77,7 +73,7 @@ def Execute(data):
 			sound = sounds[Parent.GetRandom(0, len(sounds))]
 
 			soundpath = soundspath + "\\" + sound
-			if Parent.PlaySound(soundpath, volume): 
+			if Parent.PlaySound(soundpath, volume):
 				if settings["useCooldown"]:
 					Parent.AddUserCooldown(ScriptName, command, userId, settings["userCooldown"])
 					Parent.AddCooldown(ScriptName, command, settings["cooldown"])
