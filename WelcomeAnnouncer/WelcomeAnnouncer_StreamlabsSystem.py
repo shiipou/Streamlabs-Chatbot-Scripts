@@ -34,7 +34,7 @@ def Init():
 	except:
 		settings = {
 			"liveOnly": True,
-			"words": "hey, hi, hello",
+			"sourceName": "",
 			"permission": "Everyone",
 			"volume": 50.0,
 			"useCooldown": True,
@@ -73,18 +73,23 @@ def Execute(data):
 				outputMessage = ""
 		else:
 			sound = sounds[Parent.GetRandom(0, len(sounds))]
+			Parent.SetOBSSourceRender(settings["sourceName"], true)
+
 
 			soundpath = soundspath + "\\" + sound
 			if Parent.PlaySound(soundpath, volume):
 				if settings["useCooldown"]:
 					Parent.AddUserCooldown(ScriptName, command, userId, settings["userCooldown"])
 					Parent.AddCooldown(ScriptName, command, settings["cooldown"])
-			
 			outputMessage = settings["responseHello"]
 
 		outputMessage = outputMessage.replace("$user", username)
 
 		Parent.SendStreamMessage(outputMessage)
+
+		sleep(settings["eventDuration"])
+		Parent.SetOBSSourceRender(settings["sourceName"], true)
+
 	return
 
 def ReloadSettings(jsonData):
@@ -98,4 +103,42 @@ def OpenReadMe():
 	return
 
 def Tick():
+
+	result = Parent.GetViewerList()
+
+	for userId in result:
+		userList.append(userId)
+		outputMessage = ""
+		username = Parent.GetDisplayName(userId)
+
+		if settings["useCooldown"] and (Parent.IsOnCooldown(ScriptName, command) or Parent.IsOnUserCooldown(ScriptName, command, userId)):
+			if settings["useCooldownMessages"]:
+				if Parent.GetCooldownDuration(ScriptName, command) > Parent.GetUserCooldownDuration(ScriptName, command, userId):
+					cdi = Parent.GetCooldownDuration(ScriptName, command)
+					cd = str(cdi / 60) + ":" + str(cdi % 60).zfill(2)
+					outputMessage = settings["onCooldown"]
+				else:
+					cdi = Parent.GetUserCooldownDuration(ScriptName, command, userId)
+					cd = str(cdi / 60) + ":" + str(cdi % 60).zfill(2)
+					outputMessage = settings["onUserCooldown"]
+				outputMessage = outputMessage.replace("$cd", cd)
+			else:
+				outputMessage = ""
+		else:
+			sound = sounds[Parent.GetRandom(0, len(sounds))]
+			Parent.SetOBSSourceRender(settings["sourceName"], true)
+
+			soundpath = soundspath + "\\" + sound
+			if Parent.PlaySound(soundpath, volume):
+				if settings["useCooldown"]:
+					Parent.AddUserCooldown(ScriptName, command, userId, settings["userCooldown"])
+					Parent.AddCooldown(ScriptName, command, settings["cooldown"])
+			outputMessage = settings["responseHello"]
+
+		outputMessage = outputMessage.replace("$user", username)
+
+		Parent.SendStreamMessage(outputMessage)
+
+		sleep(settings["eventDuration"])
+		Parent.SetOBSSourceRender(settings["sourceName"], false)
 	return

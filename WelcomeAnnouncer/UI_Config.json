@@ -8,6 +8,20 @@
         "tooltip": "True if you want it to only run when you are live",
         "group" : "General"
     },
+    "sourceName": {
+        "type": "textbox",
+        "value": "",
+        "label": "Source name",
+        "tooltip": "The full OBS sourcename to show",
+        "group": "General"
+    },
+    "eventDuration": {
+        "type": "textbox",
+        "value": 10,
+        "label": "Event Duration",
+        "tooltip": "The time in seconds before the source will be hide after an event was triggered",
+        "group": "General"
+    },
     "permission": {
         "type": "dropdown",
         "value": "Everyone",
