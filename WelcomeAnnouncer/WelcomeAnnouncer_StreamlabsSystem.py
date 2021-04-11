@@ -17,12 +17,13 @@ volume = 0.1
 command = "__WelcomeAnnouncer__"
 soundspath = ""
 sounds = []
+userList = []
 
 def ScriptToggled(state):
 	return
 
 def Init():
-	global sounds, soundspath, volume, settings
+	global sounds, soundspath, volume, settings, userList
 
 	path = os.path.dirname(__file__)
 	soundspath = path + "\\sounds"
@@ -51,10 +52,11 @@ def Init():
 	return
 
 def Execute(data):
-	if data.IsChatMessage() and Parent.HasPermission(data.User, settings["permission"], "") and ((settings["liveOnly"] and Parent.IsLive()) or (not settings["liveOnly"])):
+	if data.IsChatMessage() and (data.User not in userList) and Parent.HasPermission(data.User, settings["permission"], "") and ((settings["liveOnly"] and Parent.IsLive()) or (not settings["liveOnly"])):
 		outputMessage = ""
 		userId = data.User
 		username = data.UserName
+		userList.append(data.User)
 
 		if settings["useCooldown"] and (Parent.IsOnCooldown(ScriptName, command) or Parent.IsOnUserCooldown(ScriptName, command, userId)):
 			if settings["useCooldownMessages"]:
